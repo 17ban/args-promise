@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>browser test</title>
+    <script src="https://cdn.jsdelivr.net/npm/args-promise@1.2.1-alpha.6"></script>
+</head>
+<body>
+    <script>
+        new ArgsPromise((resolve, reject, resident) => {
+            setTimeout(() => {
+                resolve(1, 2, 'hello')
+            }, 1000)
+            resident('resident-0', 'resident-1')
+        }).then((...args) => {
+            console.log(...args)    // 1 2 'hello' 'resident-0' 'resident-1'
+            return ['foo', 'bar']
+        }).then((...args) => {
+            console.log(...args)    // 'foo' 'bar' 'resident-0' 'resident-1'
+            return 123
+        }).then((...args) => {
+            console.log(...args)    // 123 'resident-0' 'resident-1'
+        }).then((...args) => {
+            console.log(...args)    //'resident-0' 'resident-1'
+        })
+
+        new ArgsPromise((r, rj) => {
+            rj('rj')
+        }).then((msg) => {
+            console.log(msg)
+            return 'no err'
+        }, errMsg => {
+            console.log(errMsg)
+            return 'err handled'
+        }).then((msg) =>{
+            console.log('after then', msg)
+        })
+
+        let p1 = new ArgsPromise(resolve => {
+            setTimeout(() => {
+                resolve()
+            }, 1000)
+        })
+        let p2 = new ArgsPromise(resolve => {
+            setTimeout(() => {
+                resolve()
+            }, 3000)
+        })
+        Promise.allSettled([p1, p2])
+            .then(() => {
+                console.log('allSettled')
+            })
+
+        async function foo() {
+            await new ArgsPromise((resolve) => {
+                setTimeout(() => {
+                    resolve()
+                }, 3000)
+            })
+            console.log('bar')
+        }
+        foo()
+    </script>
+</body>
+</html>

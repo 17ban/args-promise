@@ -1,0 +1,41 @@
+{
+  "name": "args-promise",
+  "version": "1.2.1-alpha.6",
+  "description": "Use Promise with multiple arguments.",
+  "main": "dist/ArgsPromise.js",
+  "module": "dist/ArgsPromise.esm.js",
+  "types": "dist/ArgsPromise.d.ts",
+  "jsdelivr": "./dist/ArgsPromise.browser.js",
+  "unpkg": "./dist/ArgsPromise.browser.js",
+  "files": [
+    "/dist",
+    "/src",
+    "/scripts",
+    "/CHANGELOG.md",
+    "/README.md",
+    "/LICENSE.md"
+  ],
+  "scripts": {
+    "build": "node ./scripts/build.js",
+    "test": "node ./test/test.js",
+    "watch": "tsc -w"
+  },
+  "keywords": [
+    "promise",
+    "async",
+    "args",
+    "argv",
+    "argument",
+    "param",
+    "parameter"
+  ],
+  "author": {
+    "name": "17ban",
+    "email": "17ban.1024@gmail.com",
+    "url": "https://17ban.icu/"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/17ban/args-promise",
+  "repository": "github:17ban/args-promise",
+  "dependencies": {}
+}
