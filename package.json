@@ -1,8 +1,8 @@
 {
   "name": "args-promise",
-  "version": "1.2.1-alpha.6",
+  "version": "1.2.1",
   "description": "Use Promise with multiple arguments.",
-  "main": "dist/ArgsPromise.js",
+  "main": "dist/ArgsPromise.cjs.js",
   "module": "dist/ArgsPromise.esm.js",
   "types": "dist/ArgsPromise.d.ts",
   "jsdelivr": "./dist/ArgsPromise.browser.js",
