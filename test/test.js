@@ -74,9 +74,14 @@ const ArgsPromise = require('../../ArgsPromise').default
 
 
 async function t() {
-    let p = new ArgsPromise((r, rj) => {
-        rj('err')
+    let p1 = new ArgsPromise((resolve, reject) => {
+        resolve('hello', 'world')
     })
-    console.log(await p.to())
+    console.log(await p1.to())  // --> [ null, [ 'hello', 'world' ] ]
+
+    let p2 = new ArgsPromise((resolve, reject) => {
+        reject('err')
+    })
+    console.log(await p2.to())  // --> [ [ 'err' ], undefined ]
 }
 t()
