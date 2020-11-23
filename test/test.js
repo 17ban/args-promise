@@ -38,6 +38,25 @@ test('then', () => {
     })
 })
 
+test('finally', async () => {
+    let a = 0
+    await new ArgsPromise(r => {
+        r()
+    }).finally(() => {
+        a++
+    })
+
+    await new ArgsPromise((r, rj) => {
+        rj()
+    })
+    .catch(() => {})
+    .finally(() => {
+        a++
+    })
+    
+    expect(a).toBe(2)
+})
+
 test('pack', async () => {
     let args = await new ArgsPromise(r => {
         r('a', 'b', 123)
