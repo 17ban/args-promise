@@ -37,5 +37,8 @@
   "license": "MIT",
   "homepage": "https://github.com/17ban/args-promise",
   "repository": "github:17ban/args-promise",
-  "dependencies": {}
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^26.6.3"
+  }
 }
