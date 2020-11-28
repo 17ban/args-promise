@@ -32,7 +32,7 @@ class ArgsPromise {
                 let resident = (...residents: any[]) => {
                     this._residents = residents
                 }
-                let resolve =  (...args: any[]) => {
+                let resolve = (...args: any[]) => {
                     _resolve(args)
                 }
                 let reject = (...args: any[]) => {

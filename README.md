@@ -1,3 +1,7 @@
+### [中文README](./README-zh.md)
+
+
+
 # Installation
 
 #### npm

@@ -5,13 +5,12 @@
   "main": "dist/ArgsPromise.cjs.js",
   "module": "dist/ArgsPromise.esm.js",
   "types": "dist/ArgsPromise.d.ts",
-  "jsdelivr": "./dist/ArgsPromise.browser.js",
-  "unpkg": "./dist/ArgsPromise.browser.js",
+  "jsdelivr": "./dist/ArgsPromise.browser.min.js",
+  "unpkg": "./dist/ArgsPromise.browser.min.js",
   "files": [
     "/dist",
     "/src",
-    "/scripts",
-    "/CHANGELOG.md",
+    "/README-zh.md",
     "/README.md",
     "/LICENSE.md"
   ],
@@ -37,9 +36,5 @@
   },
   "license": "MIT",
   "homepage": "https://github.com/17ban/args-promise",
-  "repository": "github:17ban/args-promise",
-  "dependencies": {},
-  "devDependencies": {
-    "jest": "^26.6.3"
-  }
+  "repository": "github:17ban/args-promise"
 }
