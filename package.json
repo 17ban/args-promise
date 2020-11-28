@@ -16,18 +16,17 @@
   ],
   "scripts": {
     "build": "node ./scripts/build.js",
-    "test": "node ./test/test.js",
     "jest": "jest",
     "watch": "tsc -w"
   },
   "keywords": [
     "promise",
-    "async",
     "args",
     "argv",
     "argument",
     "param",
-    "parameter"
+    "parameter",
+    "async"
   ],
   "author": {
     "name": "17ban",
