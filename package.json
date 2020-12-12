@@ -1,6 +1,6 @@
 {
   "name": "args-promise",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Use Promise with multiple arguments.",
   "main": "dist/ArgsPromise.cjs.js",
   "module": "dist/ArgsPromise.esm.js",
@@ -26,7 +26,8 @@
     "argument",
     "param",
     "parameter",
-    "async"
+    "async",
+    "await"
   ],
   "author": {
     "name": "17ban",
