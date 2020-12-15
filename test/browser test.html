@@ -8,59 +8,133 @@
 </head>
 <body>
     <script>
-        new ArgsPromise((resolve, reject, resident) => {
-            setTimeout(() => {
-                resolve(1, 2, 'hello')
-            }, 1000)
-            resident('resident-0', 'resident-1')
-        }).then((...args) => {
-            console.log(...args)    // 1 2 'hello' 'resident-0' 'resident-1'
-            return ['foo', 'bar']
-        }).then((...args) => {
-            console.log(...args)    // 'foo' 'bar' 'resident-0' 'resident-1'
-            return 123
-        }).then((...args) => {
-            console.log(...args)    // 123 'resident-0' 'resident-1'
-        }).then((...args) => {
-            console.log(...args)    //'resident-0' 'resident-1'
-        })
-
-        new ArgsPromise((r, rj) => {
-            rj('rj')
-        }).then((msg) => {
-            console.log(msg)
-            return 'no err'
-        }, errMsg => {
-            console.log(errMsg)
-            return 'err handled'
-        }).then((msg) =>{
-            console.log('after then', msg)
-        })
-
-        let p1 = new ArgsPromise(resolve => {
-            setTimeout(() => {
-                resolve()
-            }, 1000)
-        })
-        let p2 = new ArgsPromise(resolve => {
-            setTimeout(() => {
-                resolve()
-            }, 3000)
-        })
-        Promise.allSettled([p1, p2])
-            .then(() => {
-                console.log('allSettled')
-            })
-
-        async function foo() {
-            await new ArgsPromise((resolve) => {
-                setTimeout(() => {
-                    resolve()
-                }, 3000)
-            })
-            console.log('bar')
+        function _equal(a, b) {
+            if(a === b) {
+                return true
+            }
+            if(a instanceof Object && b instanceof Object) {
+                return JSON.stringify(a) === JSON.stringify(b)
+            }
+            return false
         }
-        foo()
+
+        function _cmp(value, expected) {
+            return {
+                status: _equal(value, expected) ? 'passed' : 'failed',
+                value: {
+                    value: value,
+                    type: typeof value
+                },
+                expected: {
+                    value: expected,
+                    type: typeof expected
+                }
+            }
+        }
+
+        async function test(testName, testFunc) {
+            let report = {
+                testName,
+                summary: {
+                    passed: 0,
+                    failed: 0
+                },
+                testResults: []
+            }
+
+            const cmp = (val, expected) => {
+                let result = _cmp(val, expected)
+                report.testResults.push(result)
+                if(result.status === 'passed')
+                    report.summary.passed++
+                else
+                    report.summary.failed++
+            }
+
+            await testFunc(cmp)
+
+            if(report.summary.failed === 0 && report.summary.passed > 0)
+                console.log(report)
+            else
+                console.error(report)
+        }
+        
+
+        test('resolve and resident', async cmp => {
+            await new ArgsPromise((r, rj, rd) => {
+                rd('rd1', 'rd2')
+                r('foo', 'bar')
+            }).then((...args) => {
+                cmp(args, ['foo', 'bar', 'rd1', 'rd2'])
+            }).then((...args) => {
+                cmp(args, ['rd1', 'rd2'])
+            })
+        })
+
+        test('reject', async cmp => {
+            let a = 0
+            await new ArgsPromise((r, rj) => {
+                rj('foo', 'bar')
+            }).then(() => {
+                a++
+            }).then(() => {
+                a++
+            }).catch((...args) => {
+                cmp(args, ['foo', 'bar'])
+                cmp(a, 0)
+            })
+        })
+
+        test('then', async cmp => {
+            await new ArgsPromise(r => {
+                r()
+            }).then(() => {
+                return 123
+            }).then(arg => {
+                cmp(arg, 123)
+                return ['foo', 'bar', null, 22]
+            }).then((...args) => {
+                cmp(args, ['foo', 'bar', null, 22])
+            })
+        })
+
+        test('finally', async cmp => {
+            let a = 0
+            await new ArgsPromise(r => {
+                r()
+            }).finally(() => {
+                a++
+            })
+
+            await new ArgsPromise((r, rj) => {
+                rj()
+            })
+            .catch(() => {})
+            .finally(() => {
+                a++
+            })
+            
+            cmp(a, 2)
+        })
+
+        test('pack', async cmp => {
+            let args = await new ArgsPromise(r => {
+                r('a', 'b', 123)
+            }).pack()
+            cmp(args, ['a', 'b', 123])
+        })
+
+        test('to', async cmp => {
+            let args = await new ArgsPromise(r => {
+                r('a', 'b', 123)
+            }).to()
+            cmp(args, [null, ['a', 'b', 123]])
+
+            args = await new ArgsPromise((r, rj) => {
+                rj('reason', 123)
+            }).to()
+            cmp(args, [['reason', 123], undefined])
+        })
     </script>
 </body>
 </html>
