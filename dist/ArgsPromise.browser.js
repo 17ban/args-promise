@@ -9,7 +9,7 @@ function _arrify(val) {
     return val === undefined ? [] :
         (val instanceof Array) ? val : [val];
 }
-var ArgsPromiseInitOpts = /** @class */ (function () {
+var ArgsPromiseInitOpts = (function () {
     function ArgsPromiseInitOpts(promise, residents) {
         if (promise === void 0) { promise = new Promise(function () { }); }
         if (residents === void 0) { residents = []; }
@@ -18,7 +18,7 @@ var ArgsPromiseInitOpts = /** @class */ (function () {
     }
     return ArgsPromiseInitOpts;
 }());
-var ArgsPromise = /** @class */ (function () {
+var ArgsPromise = (function () {
     function ArgsPromise(executor) {
         var _this = this;
         if (executor instanceof ArgsPromiseInitOpts) {
