@@ -68,7 +68,7 @@ new ArgsPromise(resolve => {
 }).then(() => {
     return ['foo', 'bar']
 }).then((a, b) => {
-    console.log(a, b)  // 'foo' 'bar'
+    console.log(a, b)  // --> 'foo' 'bar'
 })
 ```
 
@@ -76,7 +76,7 @@ new ArgsPromise(resolve => {
 
 
 
-`await` and `Promise.allSettled()` is effective for **ArgsPromise**.
+`await` and the methods of **Promise** (such as `Promise.allSettled()`) is also effective for **ArgsPromise**.
 
 ```javascript
 let p1 = new ArgsPromise(resolve => {
@@ -141,7 +141,7 @@ console.log(args)  // --> [ 1, 2, 3, 4, 5 ]
 
 
 
-Referring to [await-to-js](https://www.npmjs.com/package/await-to-js) ，**ArgsPormise** provides `.to()` to help you to handle simple error like this:
+Referring to [await-to-js](https://www.npmjs.com/package/await-to-js) ，**ArgsPormise** provides `.to()` to help you to handle simple errors like this:
 
 ```javascript
 let p1 = new ArgsPromise((resolve, reject) => {
@@ -170,7 +170,7 @@ if(err2) {
 
 The executor function  which passed into **ArgsPromise**'s constructor receives the third parameter. It is a function that allows you to set some **resident variables**. In the same Promise Chain, **resident variables** will always be passed into the handle function of `.then()`, `.catch()` and `.finally()`.
 
-There is example of setting  and receiving **resident variables**:
+There is example of setting and receiving **resident variables**:
 
 ```javascript
 new ArgsPromise((resolve, reject, resident) => {

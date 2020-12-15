@@ -70,7 +70,7 @@ new ArgsPromise(resolve => {
 
 
 
-`await` 与 `Promise.allSettled()` 也适用于 **ArgsPromise**。
+`await` 以及像 `Promise.allSettled()` 这类适用于 **Promise** 的方法也同样适用于 **ArgsPromise**。
 
 ```javascript
 let p1 = new ArgsPromise(resolve => {
