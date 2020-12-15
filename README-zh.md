@@ -24,7 +24,7 @@ yarn add args-promise
 
 ```html
 <script type="module">
-  import ArgsPromise from 'https://cdn.jsdelivr.net/npm/args-promise@1.2.1/dist/ArgsPromise.esm.min.js'
+  import ArgsPromise from 'https://cdn.jsdelivr.net/npm/args-promise@1.2.2/dist/ArgsPromise.esm.min.js'
 </script>
 ```
 
