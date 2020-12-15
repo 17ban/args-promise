@@ -25,7 +25,7 @@ let cjs = [
     '&& tsc -t ES6 -m commonjs -d --lib es2019 --strict --outDir ./dist --removeComments ./src/ArgsPromise.ts',
     '&& cd ./dist',
     '&& ren ArgsPromise.js ArgsPromise.cjs.js',
-    '&& terser ArgsPromise.cjs.js -o ArgsPromise.cjs.min.js -c -m'
+    // '&& terser ArgsPromise.cjs.js -o ArgsPromise.cjs.min.js -c -m'
 ].join(' ')
 
 let esm = [
