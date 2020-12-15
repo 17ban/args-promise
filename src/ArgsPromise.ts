@@ -1,9 +1,9 @@
-function _arrify(val: any) {
+function __arr(val: any) {
     return val === undefined ? [] :
         (val instanceof Array) ? val : [val]
 }
 
-class ArgsPromiseInitOpts {
+class APOpts {
     residents: any[]
     promise: Promise<any[]>
     constructor(promise: Promise<any[]> = new Promise<any[]>(() => {}), residents: any[] = []) {
@@ -21,9 +21,9 @@ class ArgsPromise {
             resolve: (...args: any[]) => void,
             reject: (...args: any[]) => void,
             resident: (...residents: any[]) => void
-        ) => any) | ArgsPromiseInitOpts
+        ) => any) | APOpts
     ) {
-        if(executor instanceof ArgsPromiseInitOpts) {
+        if(executor instanceof APOpts) {
             this._residents = executor.residents
             this._promise = executor.promise
         } else if(executor instanceof Function){
@@ -50,12 +50,12 @@ class ArgsPromise {
         onrejected?: (...args: any[]) => any
     ) {
         let _onfulfilled = onfulfilled ? 
-            (args: any[]) => _arrify(onfulfilled(...args, ...this._residents)) : undefined
+            (args: any[]) => __arr(onfulfilled(...args, ...this._residents)) : undefined
         
         let _onrejected = onrejected ? 
-            (args: any[]) => _arrify(onrejected(...args, ...this._residents)) : undefined
+            (args: any[]) => __arr(onrejected(...args, ...this._residents)) : undefined
         
-        return new ArgsPromise(new ArgsPromiseInitOpts(
+        return new ArgsPromise(new APOpts(
             this._promise.then(_onfulfilled, _onrejected),
             this._residents
         ))
@@ -63,9 +63,9 @@ class ArgsPromise {
 
     catch(onrejected?: (...args: any[]) => any) {
         let _onrejected = onrejected ? 
-            (args: any[]) => _arrify(onrejected(...args, ...this._residents)) : undefined
+            (args: any[]) => __arr(onrejected(...args, ...this._residents)) : undefined
         
-        return new ArgsPromise(new ArgsPromiseInitOpts(
+        return new ArgsPromise(new APOpts(
             this._promise.catch(_onrejected),
             this._residents
         ))
@@ -73,9 +73,9 @@ class ArgsPromise {
 
     finally(onfinally?: (...args: any[]) => any) {
         let _onfinally = onfinally ? 
-            () => _arrify(onfinally(...this._residents)) : undefined
+            () => __arr(onfinally(...this._residents)) : undefined
         
-        return new ArgsPromise(new ArgsPromiseInitOpts(
+        return new ArgsPromise(new APOpts(
             this._promise.finally(_onfinally),
             this._residents
         ))
@@ -102,4 +102,4 @@ class ArgsPromise {
 
 /* -- export -- */
 export default ArgsPromise
-export { ArgsPromise, ArgsPromiseInitOpts }
+export { ArgsPromise, APOpts }

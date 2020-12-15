@@ -1,8 +1,8 @@
-function _arrify(val) {
+function __arr(val) {
     return val === undefined ? [] :
         (val instanceof Array) ? val : [val];
 }
-class ArgsPromiseInitOpts {
+class APOpts {
     constructor(promise = new Promise(() => { }), residents = []) {
         this.residents = residents;
         this.promise = promise;
@@ -10,7 +10,7 @@ class ArgsPromiseInitOpts {
 }
 class ArgsPromise {
     constructor(executor) {
-        if (executor instanceof ArgsPromiseInitOpts) {
+        if (executor instanceof APOpts) {
             this._residents = executor.residents;
             this._promise = executor.promise;
         }
@@ -35,20 +35,20 @@ class ArgsPromise {
     }
     then(onfulfilled, onrejected) {
         let _onfulfilled = onfulfilled ?
-            (args) => _arrify(onfulfilled(...args, ...this._residents)) : undefined;
+            (args) => __arr(onfulfilled(...args, ...this._residents)) : undefined;
         let _onrejected = onrejected ?
-            (args) => _arrify(onrejected(...args, ...this._residents)) : undefined;
-        return new ArgsPromise(new ArgsPromiseInitOpts(this._promise.then(_onfulfilled, _onrejected), this._residents));
+            (args) => __arr(onrejected(...args, ...this._residents)) : undefined;
+        return new ArgsPromise(new APOpts(this._promise.then(_onfulfilled, _onrejected), this._residents));
     }
     catch(onrejected) {
         let _onrejected = onrejected ?
-            (args) => _arrify(onrejected(...args, ...this._residents)) : undefined;
-        return new ArgsPromise(new ArgsPromiseInitOpts(this._promise.catch(_onrejected), this._residents));
+            (args) => __arr(onrejected(...args, ...this._residents)) : undefined;
+        return new ArgsPromise(new APOpts(this._promise.catch(_onrejected), this._residents));
     }
     finally(onfinally) {
         let _onfinally = onfinally ?
-            () => _arrify(onfinally(...this._residents)) : undefined;
-        return new ArgsPromise(new ArgsPromiseInitOpts(this._promise.finally(_onfinally), this._residents));
+            () => __arr(onfinally(...this._residents)) : undefined;
+        return new ArgsPromise(new APOpts(this._promise.finally(_onfinally), this._residents));
     }
     pack() {
         return new ArgsPromise(r => {
@@ -68,4 +68,4 @@ class ArgsPromise {
     }
 }
 export default ArgsPromise;
-export { ArgsPromise, ArgsPromiseInitOpts };
+export { ArgsPromise, APOpts };
