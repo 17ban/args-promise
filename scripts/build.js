@@ -1,57 +1,66 @@
-const process = require('child_process')
-const fs = require('fs')
+const fse = require('fs-extra')
+const execa = require('execa')
 
-async function exec(command) {
-    return new Promise(r => {
-        process.exec(command, { encoding: 'utf-8' }, (error, stdout, stderr) => {
-            // if(stdout) console.log("stdout:" + stdout)
-            if(error) console.log("error:" + error)
-            if(stderr) console.log("stderr:" + stderr)
-            r()
-        })
-    })
+async function exec(file, args) {
+    try {
+        const { stdout } = await execa(file, args)
+        console.log(stdout)
+    } catch(err) {
+        console.log(err)
+    }
 }
 
 
-/**
- * build command
- */
-let delDist = [
-    'del /q dist\\*'
-].join(' ')
 
-let cjs = [
-    'chcp 65001',
-    '&& tsc -t ES6 -m commonjs -d --lib es2019 --strict --outDir ./dist --removeComments ./src/ArgsPromise.ts',
-    '&& cd ./dist',
-    '&& ren ArgsPromise.js ArgsPromise.cjs.js'
-].join(' ')
+async function buildCjs() {
+    await exec('tsc', [
+        '-t', 'ES6',
+        '-m', 'commonjs',
+        '--lib', 'es2019',
+        '--outDir', './dist',
+        '--strict',
+        '--removeComments',
+        '-d',
+        './src/ArgsPromise.ts'
+    ])
+    await fse.rename('./dist/ArgsPromise.js', './dist/ArgsPromise.cjs.js')
+}
 
-let esm = [
-    'chcp 65001',
-    '&& tsc -t ES6 -m ES6 --lib es2019 --strict --outDir ./dist --removeComments ./src/ArgsPromise.ts',
-    '&& cd ./dist',
-    '&& ren ArgsPromise.js ArgsPromise.esm.js'
-].join(' ')
+async function buildEsm() {
+    await fse.copy('./src/ArgsPromise.ts', './src/ArgsPromise.esm.ts')
+    await exec('tsc', [
+        '-t', 'ES6',
+        '-m', 'ES6',
+        '--lib', 'es2019',
+        '--outDir', './dist',
+        '--strict',
+        '--removeComments',
+        '--moduleResolution', 'node',
+        './src/ArgsPromise.esm.ts'
+    ])
+    await fse.remove('./src/ArgsPromise.esm.ts')
+}
 
-let browser = [
-    'chcp 65001',
-    '&& tsc -t ES5 --outDir ./dist --lib es2019 --removeComments ./src/ArgsPromise.browser.ts',
-    '&& del /q src\\ArgsPromise.browser.ts'
-].join(' ')
+async function buildBrowser() {
+    let src = await fse.readFile('./src/ArgsPromise.ts', { encoding: 'utf-8'})
+    await fse.writeFile('./src/ArgsPromise.browser.ts', src.split('/* -- export -- */')[0])
+    await exec('tsc', [
+        '-t', 'ES5',
+        '--lib', 'es2019',
+        '--outDir', './dist',
+        '--removeComments',
+        './src/ArgsPromise.browser.ts'
+    ])
+    await fse.remove('./src/ArgsPromise.browser.ts')
+}
 
 
 /**
  * build
  */
-async function build() {
-    await exec(delDist)
-
-    const src = fs.readFileSync('./src/ArgsPromise.ts', { encoding: 'utf-8'})
-    fs.writeFileSync('./src/ArgsPromise.browser.ts', src.split('/* -- export -- */')[0])
-    exec(browser)
-
-    await exec(cjs)
-    await exec(esm)
-}
-build()
+(async function () {
+    fse.removeSync('./dist')
+    buildCjs()
+    buildEsm()
+    buildBrowser()
+})()

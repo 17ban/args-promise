@@ -38,6 +38,8 @@
   "homepage": "https://github.com/17ban/args-promise",
   "repository": "github:17ban/args-promise",
   "devDependencies": {
+    "execa": "^5.0.0",
+    "fs-extra": "^9.0.1",
     "jest": "^26.6.3",
     "typescript": "^4.1.3"
   }
