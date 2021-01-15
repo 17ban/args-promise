@@ -24,22 +24,19 @@ let cjs = [
     'chcp 65001',
     '&& tsc -t ES6 -m commonjs -d --lib es2019 --strict --outDir ./dist --removeComments ./src/ArgsPromise.ts',
     '&& cd ./dist',
-    '&& ren ArgsPromise.js ArgsPromise.cjs.js',
-    // '&& terser ArgsPromise.cjs.js -o ArgsPromise.cjs.min.js -c -m'
+    '&& ren ArgsPromise.js ArgsPromise.cjs.js'
 ].join(' ')
 
 let esm = [
     'chcp 65001',
     '&& tsc -t ES6 -m ES6 --lib es2019 --strict --outDir ./dist --removeComments ./src/ArgsPromise.ts',
     '&& cd ./dist',
-    '&& ren ArgsPromise.js ArgsPromise.esm.js',
-    '&& terser ArgsPromise.esm.js -o ArgsPromise.esm.min.js -c -m'
+    '&& ren ArgsPromise.js ArgsPromise.esm.js'
 ].join(' ')
 
 let browser = [
     'chcp 65001',
     '&& tsc -t ES5 --outDir ./dist --lib es2019 --removeComments ./src/ArgsPromise.browser.ts',
-    '&& terser ./dist/ArgsPromise.browser.js -o ./dist/ArgsPromise.browser.min.js -c -m',
     '&& del /q src\\ArgsPromise.browser.ts'
 ].join(' ')
 
