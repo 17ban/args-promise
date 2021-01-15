@@ -6,6 +6,7 @@ declare class APOpts {
 declare class ArgsPromise {
     _residents: any[];
     _promise: Promise<any[]>;
+    [Symbol.toStringTag]: string;
     constructor(executor: ((resolve: (...args: any[]) => void, reject: (...args: any[]) => void, resident: (...residents: any[]) => void) => any) | APOpts);
     then(onfulfilled?: (...args: any[]) => any, onrejected?: (...args: any[]) => any): ArgsPromise;
     catch(onrejected?: (...args: any[]) => any): ArgsPromise;

@@ -75,3 +75,29 @@ test('to', async () => {
     }).to()
     expect(args).toEqual([['reason', 123], undefined])
 })
+
+test('resolve a Promise', async () => {
+    await new ArgsPromise(r => {
+        r(new ArgsPromise(_r => {
+            setTimeout(() => {
+                _r('foo1', 'bar1')
+            }, 1)
+        }))
+    }).then((...args) => {
+        expect(args).toEqual(['foo1', 'bar1'])
+        return new Promise(_r => {
+            setTimeout(() => {
+                _r('foo2')
+            }, 1)
+        })
+    }).then(args => {
+        expect(args).toBe('foo2')
+        return new ArgsPromise((_r, _rj) => {
+            setTimeout(() => {
+                _rj('foo3', 'bar3')
+            }, 1)
+        })
+    }).catch((...args) => {
+        expect(args).toEqual(['foo3', 'bar3'])
+    })
+})

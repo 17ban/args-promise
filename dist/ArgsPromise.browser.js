@@ -5,9 +5,31 @@ var __spreadArrays = (this && this.__spreadArrays) || function () {
             r[k] = a[j];
     return r;
 };
-function __arr(val) {
-    return val === undefined ? [] :
+function __isPromise(obj) {
+    return obj instanceof Promise ? true :
+        obj instanceof ArgsPromise;
+}
+function __handle(val) {
+    var arr = val === undefined ? [] :
         (val instanceof Array) ? val : [val];
+    if (!(arr.length === 1 && __isPromise(arr[0]))) {
+        return arr;
+    }
+    return new Promise(function (r, rj) {
+        arr[0].then(function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            r(args);
+        }, function () {
+            var args = [];
+            for (var _i = 0; _i < arguments.length; _i++) {
+                args[_i] = arguments[_i];
+            }
+            rj(args);
+        });
+    });
 }
 var APOpts = (function () {
     function APOpts(promise, residents) {
@@ -21,6 +43,7 @@ var APOpts = (function () {
 var ArgsPromise = (function () {
     function ArgsPromise(executor) {
         var _this = this;
+        this[Symbol.toStringTag] = 'ArgsPromise';
         if (executor instanceof APOpts) {
             this._residents = executor.residents;
             this._promise = executor.promise;
@@ -40,7 +63,7 @@ var ArgsPromise = (function () {
                     for (var _i = 0; _i < arguments.length; _i++) {
                         args[_i] = arguments[_i];
                     }
-                    _resolve(args);
+                    _resolve(__handle(args));
                 };
                 var reject = function () {
                     var args = [];
@@ -59,21 +82,21 @@ var ArgsPromise = (function () {
     ArgsPromise.prototype.then = function (onfulfilled, onrejected) {
         var _this = this;
         var _onfulfilled = onfulfilled ?
-            function (args) { return __arr(onfulfilled.apply(void 0, __spreadArrays(args, _this._residents))); } : undefined;
+            function (args) { return __handle(onfulfilled.apply(void 0, __spreadArrays(args, _this._residents))); } : undefined;
         var _onrejected = onrejected ?
-            function (args) { return __arr(onrejected.apply(void 0, __spreadArrays(args, _this._residents))); } : undefined;
+            function (args) { return __handle(onrejected.apply(void 0, __spreadArrays(args, _this._residents))); } : undefined;
         return new ArgsPromise(new APOpts(this._promise.then(_onfulfilled, _onrejected), this._residents));
     };
     ArgsPromise.prototype.catch = function (onrejected) {
         var _this = this;
         var _onrejected = onrejected ?
-            function (args) { return __arr(onrejected.apply(void 0, __spreadArrays(args, _this._residents))); } : undefined;
+            function (args) { return __handle(onrejected.apply(void 0, __spreadArrays(args, _this._residents))); } : undefined;
         return new ArgsPromise(new APOpts(this._promise.catch(_onrejected), this._residents));
     };
     ArgsPromise.prototype.finally = function (onfinally) {
         var _this = this;
         var _onfinally = onfinally ?
-            function () { return __arr(onfinally.apply(void 0, _this._residents)); } : undefined;
+            function () { return __handle(onfinally.apply(void 0, _this._residents)); } : undefined;
         return new ArgsPromise(new APOpts(this._promise.finally(_onfinally), this._residents));
     };
     ArgsPromise.prototype.pack = function () {

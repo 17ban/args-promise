@@ -7,7 +7,7 @@
 </head>
 <body>
     <script type="module">
-        import ArgsPromise from 'https://cdn.jsdelivr.net/npm/args-promise@1.2.2/dist/ArgsPromise.esm.min.js'
+        import ArgsPromise from '../dist/ArgsPromise.esm.js'
 
         function _equal(a, b) {
             if(a === b) {
@@ -55,9 +55,9 @@
             await testFunc(cmp)
 
             if(report.summary.failed === 0 && report.summary.passed > 0)
-                console.log(report)
+                console.log('[passed]', report.testName, report)
             else
-                console.error(report)
+                console.error(`[${report.summary.failed} failed]`, report.testName, report)
         }
         
 
@@ -135,6 +135,32 @@
                 rj('reason', 123)
             }).to()
             cmp(args, [['reason', 123], undefined])
+        })
+
+        test('resolve a Promise', async cmp => {
+            await new ArgsPromise(r => {
+                r(new ArgsPromise(_r => {
+                    setTimeout(() => {
+                        _r('foo1', 'bar1')
+                    }, 1)
+                }))
+            }).then((...args) => {
+                cmp(args, ['foo1', 'bar1'])
+                return new Promise(_r => {
+                    setTimeout(() => {
+                        _r('foo2')
+                    }, 1)
+                })
+            }).then(args => {
+                cmp(args, 'foo2')
+                return new ArgsPromise((_r, _rj) => {
+                    setTimeout(() => {
+                        _rj('foo3', 'bar3')
+                    }, 1)
+                })
+            }).catch((...args) => {
+                cmp(args, ['foo3', 'bar3'])
+            })
         })
     </script>
 </body>

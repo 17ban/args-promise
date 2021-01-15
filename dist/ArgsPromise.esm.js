@@ -1,6 +1,20 @@
-function __arr(val) {
-    return val === undefined ? [] :
+function __isPromise(obj) {
+    return obj instanceof Promise ? true :
+        obj instanceof ArgsPromise;
+}
+function __handle(val) {
+    let arr = val === undefined ? [] :
         (val instanceof Array) ? val : [val];
+    if (!(arr.length === 1 && __isPromise(arr[0]))) {
+        return arr;
+    }
+    return new Promise((r, rj) => {
+        arr[0].then((...args) => {
+            r(args);
+        }, (...args) => {
+            rj(args);
+        });
+    });
 }
 class APOpts {
     constructor(promise = new Promise(() => { }), residents = []) {
@@ -10,6 +24,7 @@ class APOpts {
 }
 class ArgsPromise {
     constructor(executor) {
+        this[Symbol.toStringTag] = 'ArgsPromise';
         if (executor instanceof APOpts) {
             this._residents = executor.residents;
             this._promise = executor.promise;
@@ -21,7 +36,7 @@ class ArgsPromise {
                     this._residents = residents;
                 };
                 let resolve = (...args) => {
-                    _resolve(args);
+                    _resolve(__handle(args));
                 };
                 let reject = (...args) => {
                     _reject(args);
@@ -35,19 +50,19 @@ class ArgsPromise {
     }
     then(onfulfilled, onrejected) {
         let _onfulfilled = onfulfilled ?
-            (args) => __arr(onfulfilled(...args, ...this._residents)) : undefined;
+            (args) => __handle(onfulfilled(...args, ...this._residents)) : undefined;
         let _onrejected = onrejected ?
-            (args) => __arr(onrejected(...args, ...this._residents)) : undefined;
+            (args) => __handle(onrejected(...args, ...this._residents)) : undefined;
         return new ArgsPromise(new APOpts(this._promise.then(_onfulfilled, _onrejected), this._residents));
     }
     catch(onrejected) {
         let _onrejected = onrejected ?
-            (args) => __arr(onrejected(...args, ...this._residents)) : undefined;
+            (args) => __handle(onrejected(...args, ...this._residents)) : undefined;
         return new ArgsPromise(new APOpts(this._promise.catch(_onrejected), this._residents));
     }
     finally(onfinally) {
         let _onfinally = onfinally ?
-            () => __arr(onfinally(...this._residents)) : undefined;
+            () => __handle(onfinally(...this._residents)) : undefined;
         return new ArgsPromise(new APOpts(this._promise.finally(_onfinally), this._residents));
     }
     pack() {

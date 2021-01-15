@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>browser test</title>
-    <script src="https://cdn.jsdelivr.net/npm/args-promise@1.2.2"></script>
+    <script src="../dist/ArgsPromise.browser.js"></script>
 </head>
 <body>
     <script>
@@ -54,9 +54,9 @@
             await testFunc(cmp)
 
             if(report.summary.failed === 0 && report.summary.passed > 0)
-                console.log(report)
+                console.log('[passed]', report.testName, report)
             else
-                console.error(report)
+                console.error(`[${report.summary.failed} failed]`, report.testName, report)
         }
         
 
@@ -134,6 +134,32 @@
                 rj('reason', 123)
             }).to()
             cmp(args, [['reason', 123], undefined])
+        })
+
+        test('resolve a Promise', async cmp => {
+            await new ArgsPromise(r => {
+                r(new ArgsPromise(_r => {
+                    setTimeout(() => {
+                        _r('foo1', 'bar1')
+                    }, 1)
+                }))
+            }).then((...args) => {
+                cmp(args, ['foo1', 'bar1'])
+                return new Promise(_r => {
+                    setTimeout(() => {
+                        _r('foo2')
+                    }, 1)
+                })
+            }).then(args => {
+                cmp(args, 'foo2')
+                return new ArgsPromise((_r, _rj) => {
+                    setTimeout(() => {
+                        _rj('foo3', 'bar3')
+                    }, 1)
+                })
+            }).catch((...args) => {
+                cmp(args, ['foo3', 'bar3'])
+            })
         })
     </script>
 </body>

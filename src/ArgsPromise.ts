@@ -1,6 +1,21 @@
-function __arr(val: any) {
-    return val === undefined ? [] :
+function __isPromise(obj: Object) {
+    return obj instanceof Promise ? true : 
+        obj instanceof ArgsPromise
+}
+
+function __handle(val: any) {
+    let arr = val === undefined ? [] :
         (val instanceof Array) ? val : [val]
+    if(!(arr.length === 1 && __isPromise(arr[0]))) {
+        return arr
+    }
+    return new Promise<any[]>((r, rj) => {
+        arr[0].then((...args: any[]) => {
+            r(args)
+        }, (...args: any[]) => {
+            rj(args)
+        })
+    })
 }
 
 class APOpts {
@@ -15,6 +30,7 @@ class APOpts {
 class ArgsPromise {
     _residents: any[]
     _promise: Promise<any[]>
+    [Symbol.toStringTag] = 'ArgsPromise'
     
     constructor(
         executor: ((
@@ -33,7 +49,7 @@ class ArgsPromise {
                     this._residents = residents
                 }
                 let resolve = (...args: any[]) => {
-                    _resolve(args)
+                    _resolve(__handle(args))
                 }
                 let reject = (...args: any[]) => {
                     _reject(args)
@@ -50,10 +66,10 @@ class ArgsPromise {
         onrejected?: (...args: any[]) => any
     ) {
         let _onfulfilled = onfulfilled ? 
-            (args: any[]) => __arr(onfulfilled(...args, ...this._residents)) : undefined
+            (args: any[]) => __handle(onfulfilled(...args, ...this._residents)) : undefined
         
         let _onrejected = onrejected ? 
-            (args: any[]) => __arr(onrejected(...args, ...this._residents)) : undefined
+            (args: any[]) => __handle(onrejected(...args, ...this._residents)) : undefined
         
         return new ArgsPromise(new APOpts(
             this._promise.then(_onfulfilled, _onrejected),
@@ -63,7 +79,7 @@ class ArgsPromise {
 
     catch(onrejected?: (...args: any[]) => any) {
         let _onrejected = onrejected ? 
-            (args: any[]) => __arr(onrejected(...args, ...this._residents)) : undefined
+            (args: any[]) => __handle(onrejected(...args, ...this._residents)) : undefined
         
         return new ArgsPromise(new APOpts(
             this._promise.catch(_onrejected),
@@ -73,7 +89,7 @@ class ArgsPromise {
 
     finally(onfinally?: (...args: any[]) => any) {
         let _onfinally = onfinally ? 
-            () => __arr(onfinally(...this._residents)) : undefined
+            () => __handle(onfinally(...this._residents)) : undefined
         
         return new ArgsPromise(new APOpts(
             this._promise.finally(_onfinally),
