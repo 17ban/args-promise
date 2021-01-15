@@ -21,14 +21,14 @@ yarn add args-promise
 #### CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/args-promise@1.2.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/args-promise@1.3.0"></script>
 ```
 
 Or you can import the ES Modules compatible build like this:
 
 ```html
 <script type="module">
-  import ArgsPromise from 'https://cdn.jsdelivr.net/npm/args-promise@1.2.2/dist/ArgsPromise.esm.min.js'
+  import ArgsPromise from 'https://cdn.jsdelivr.net/npm/args-promise@1.3.0/dist/ArgsPromise.esm.min.js'
 </script>
 ```
 
@@ -170,7 +170,7 @@ if(err2) {
 
 The executor function  which passed into **ArgsPromise**'s constructor receives the third parameter. It is a function that allows you to set some **resident variables**. In the same Promise Chain, **resident variables** will always be passed into the handle function of `.then()`, `.catch()` and `.finally()`.
 
-There is example of setting and receiving **resident variables**:
+There is an example of setting and receiving **resident variables**:
 
 ```javascript
 new ArgsPromise((resolve, reject, resident) => {

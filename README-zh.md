@@ -17,14 +17,14 @@ yarn add args-promise
 #### CDN
 
 ```html
-<script src="https://cdn.jsdelivr.net/npm/args-promise@1.2.1"></script>
+<script src="https://cdn.jsdelivr.net/npm/args-promise@1.3.0"></script>
 ```
 
 或者你可以像这样引入 ES Modules 版本的 **ArgsPromise** ：
 
 ```html
 <script type="module">
-  import ArgsPromise from 'https://cdn.jsdelivr.net/npm/args-promise@1.2.2/dist/ArgsPromise.esm.min.js'
+  import ArgsPromise from 'https://cdn.jsdelivr.net/npm/args-promise@1.3.0/dist/ArgsPromise.esm.min.js'
 </script>
 ```
 
