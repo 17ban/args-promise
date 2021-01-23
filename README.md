@@ -1,6 +1,6 @@
-### [中文README](./README-zh.md)
+# README Language
 
-
+English | [简体中文](./README-zh.md)
 
 # Installation
 
